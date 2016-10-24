@@ -1,0 +1,35 @@
+{% extends "user_layout.html" %}
+
+
+{% block styles %} {{super()}}
+  <style>
+    #mainContent{
+      margin-left:25px;
+      margin-right:25px;
+      margin-top:10px;
+      padding:5px;
+      background:rgba(0,0,0,0.5);
+      border-radius: 5px;
+    }
+  </style>
+
+{% endblock %}
+
+
+{% block content %}
+
+  <div class="container" id="mainContent">
+      <div class="row">
+        <div class="col-md-12">
+            <div class="list-group " id="sidebar" style="width:60%;">
+                <a href="#" class="list-group-item">Data Organization</a>
+                <a href="#" class="list-group-item">Time Zone Defaults</a>
+                <a href="#" class="list-group-item">Diagnostics</a>
+            </div>
+        </div>
+      </div>
+    {% block settings_page %}
+
+     {% endblock %}
+     <div class="span9"></div>
+{% endblock %}

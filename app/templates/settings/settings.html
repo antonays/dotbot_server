@@ -1,0 +1,52 @@
+{% extends "/settings/settings_base.html" %} 
+{% block scripts %} {{super()}}
+<script src="{{url_for('static', filename='js/settings.js')}}">
+</script>
+{% endblock %} 
+
+{% block styles %} {{super()}}
+  <style>
+
+  </style>
+
+{% endblock %}
+
+{% block settings_page %}
+<div class="container">
+      <div class="page-header" style="color:white;">
+        <h1>Settings</h1>
+      </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading"><b>Hostname Settings</b></div>
+        <div class="panel-body">
+          <h3>Current Local Address: {{ ip }}</h3>
+          <h3>Current Hostname: {{ hostname }}</h3>
+          <div class="input-group" style="margin-top:30px;">
+            <span class="input-group-addon" id="basic-addon3">Set new hostname</span>
+            <input type="text" class="form-control" id="hostname_text">
+            <span class="input-group-btn">
+              <button class="btn btn-default" id="host-btn" type="submit" onclick = "set_hostname()">Submit</button>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading"><b>Update Settings</b></div>
+        <div class="panel-body">
+          <h3>Current Version: {{version}}</h3>
+          <button class="btn btn-primary" id="update-btn" type="submit" onclick="update()">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

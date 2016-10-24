@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+
+<style>
+  body {
+  background: none;
+  background: url({{url_for('static', filename='img/back.png') }}) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+div.mytitle {
+  color: white;
+  text-align: center;
+  height: calc(100vh - 110px);
+  width: 100%;
+  display: table;
+}
+
+div.mytitle > div {
+  background-color: rgba(0,0,0,0.5);
+  vertical-align: middle;
+  display: table-cell;
+}
+
+div.mytitle > div  h1 {
+  font-size: 50px;
+  margin: 20px auto
+}
+
+div.mytitle > div  p {
+  font-size: 20px;
+}
+
+.img-responsive {
+  margin: auto;
+  color: white;
+  max-height: 50vh;
+}
+
+
+
+</style>
+{% endblock %}
+
+
+{% block page_content %}
+
+
+<div class="mytitle">
+  <div class="container">
+    <!--div class="row"><h1>#Robotoma</h1></div>
+    <div class="row">
+      <div class="col-xs-6">
+        <img class="img-responsive" src="{{ url_for('static', filename='img/opensource.png') }}" alt="OpenSource">
+        <p>Open Source</p>
+      </div>
+      <div class="col-xs-6">
+        <img class="img-responsive" src="{{ url_for('static', filename='img/openhw.png') }}" alt="OpenHW">
+        <p>Open Hardware</p>
+      </div>
+    </div-->
+
+    <div class="row">
+      <div class="col-xs-12">
+        <img class="img-responsive img-main" src="{{ url_for('static', filename='img/logo/Dobot_logo_white.png') }}" alt="OpenSource">
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+
+
+{% endblock %}

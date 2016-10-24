@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+
+{% block page_content %}
+
+
+<script type=text/javascript src=" {{url_for('static', filename='js/vendor/jquery-1.10.2.min.js') }}">
+</script>
+
+
+<script type=text/javascript>
+
+
+
+var deleteNode = function(node) {
+  $.ajax({
+    url: '/api/v1.0/rosnode/' + node + '/',
+    type: 'DELETE',
+    success: function(result) {
+      console.log("deleted");
+      load_nodes();
+    }
+  });
+}
+
+
+var show_nodes = function(nodes) {
+  for ( i = 0; i < nodes.length; i+=1) {
+    s = nodes[i];
+    console.log(s);
+    var btn_class = 'btn btn-xs btn-danger';
+    if (s == 'rosout') {
+      btn_class = btn_class + ' disabled';
+    }
+    $('#nodesList').append(
+      '<tr>' +
+      '<td>' + s + '</td>' +
+      '<td>'+
+      '<div class="btn-group" role="group">'+
+      '<button class="' + btn_class + '" type="button" onclick="deleteNode(\'' + s + '\')">Delete</button> </div></td>'+
+      '</tr>'
+    );
+  }
+}
+
+var load_nodes = function () {
+  $('#nodesList').html("");
+  setTimeout( function () {
+  $('#sketchesList').empty();
+  $.ajax({
+    url: '/api/v1.0/rosnodes/',
+    type: 'GET',
+    success: function(data) {
+      console.log(data);
+      show_nodes(data["nodes"]);
+    },
+    error: function(data) {
+      console.log(data)
+      $("#roscore-alert").show();
+
+    }
+  });}, 500);
+}
+
+$(load_nodes());
+
+</script>
+  <div class="container">
+    <div class="page-header">
+      <h1>Running Nodes</h1>
+    </div>
+
+    <div class="alert alert-warning" id="roscore-alert" style="display:none;">
+      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      <p><strong>roscore!</strong> is not running.</p>
+      <p>
+        <button type="button" class="btn btn-default" aria-label="Left Align">
+         Run <strong>roscore!</strong>
+        </button>
+      </p>
+    </div>
+
+
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Node List</div>
+      <!-- Table -->
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="nodesList">
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+{% endblock %}

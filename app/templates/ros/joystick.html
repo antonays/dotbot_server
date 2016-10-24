@@ -1,0 +1,47 @@
+<script type=text/javascript src=" {{url_for('static', filename='js/vendor/jquery-1.10.2.min.js') }}">
+</script>
+
+<script type=text/javascript src=" {{ url_for('static', filename='js/vendor/eventemitter2.min.js') }}">
+</script>
+<script type=text/javascript src=" {{ url_for('static', filename='js/vendor/roslib.min.js') }}">
+</script>
+
+<style>
+#info {
+  width		: 100%;
+  padding		: 5px;
+  text-align	: center;
+}
+#info a {
+  color		: #66F;
+  text-decoration	: none;
+}
+#info a:hover {
+  text-decoration	: underline;
+}
+#joypad {
+  top: 0;
+  width		: 100%;
+  height		: 100%;
+  overflow	: hidden;
+  padding		: 0;
+  margin		: 0;
+  -webkit-user-select	: none;
+  -moz-user-select	: none;
+  background-color: black;
+}
+
+</style>
+
+
+
+<div id="joypad"></div>
+
+
+
+
+<script type=text/javascript src=" {{ url_for('static', filename='js/vendor/virtualjoystick.js') }}">
+</script>
+
+<script type=text/javascript src=" {{url_for('static', filename='js/rosjoy.js') }}">
+</script>

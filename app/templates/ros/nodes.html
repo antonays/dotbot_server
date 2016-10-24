@@ -1,0 +1,163 @@
+{% extends "base.html" %} {% block page_content %}
+
+
+<script type=text/javascript src=" {{url_for('static', filename='js/vendor/jquery-1.10.2.min.js') }}">
+</script>
+
+<script type=text/javascript src="{{url_for('static', filename='js/developer.js') }}">
+</script>
+
+
+<script>
+  var my_alert = function(msg) {
+    $("#warning").append(
+      '<div class="alert alert-warning"><button type="button" class="close" data-dismiss="alert">&times;</button>' + msg +
+      '</div>'
+    );
+  }
+</script>
+
+<script type=text/javascript>
+  var deleteSketch = function(id) {
+    $.ajax({
+      url: '/api/v1.0/nodes/' + id + '/',
+      type: 'DELETE',
+      success: function(result) {
+        console.log("deleted");
+        load_nodes();
+      }
+    });
+  }
+
+  var deleteAll = function() {
+    $.ajax({
+      url: '/api/v1.0/nodes/',
+      type: 'DELETE',
+      success: function(result) {
+        console.log("deleted");
+        load_nodes();
+      }
+    });
+  }
+
+  var addSketch = function() {
+    var sketch_to_send = {
+      title: $("#newTitle").val(),
+      language: 'cpp'
+    }
+    console.log($("#python").is(':checked'))
+    if ($("#python").is(':checked')) {
+      sketch_to_send.language = 'py';
+    }
+    console.log(sketch_to_send)
+
+    $.ajax({
+      url: '/api/v1.0/nodes/',
+      type: 'POST',
+      contentType: "application/json",
+      data: JSON.stringify(sketch_to_send),
+      success: function(result) {
+        console.log("added");
+        load_nodes();
+      },
+      error: function(e) {
+        my_alert(e);
+      }
+    });
+  }
+
+
+
+  var show_nodes = function(nodes) {
+    for (i = 0; i < nodes.length; i += 1) {
+      s = nodes[i]
+
+      $('#nodesList').append(
+        '<tr>' +
+        '<td>' + s.id + '</td>' +
+        '<td>' + s.name + '</td>' +
+        '<td>' + s.language + '</td>' +
+        '<td>' + moment(s.created).fromNow() + '</td>' +
+        '<td>' +
+        '<div class="btn-group" role="group">' +
+        '<a class="btn btn-xs btn-primary " href="/nodes/' + s.id + '" >Open</a>' +
+        function (lan) {
+          if (lan === 'cpp') {
+            return '<button class="btn btn-xs btn-info " onclick= "compile(' + s.id + ')" >Build</a>';
+          } else {
+            return '';
+          }
+        }(s.language) +
+        '<button class="btn btn-xs btn-success " onclick= "run(' + s.id + ')" >Run</a>' +
+        '</tr>'
+      );
+    }
+  }
+
+  var load_nodes = function() {
+    $('#nodesList').empty();
+    $.ajax({
+      url: '/api/v1.0/nodes/',
+      type: 'GET',
+      success: function(data) {
+        show_nodes(data["nodes"])
+      }
+    });
+  }
+
+
+
+  $(load_nodes());
+</script>
+
+<div class="container container-padding-bottom">
+  <div class="page-header">
+    <h1>Programs</h1>
+  </div>
+
+  <div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Sketches List</div>
+    <!-- Table -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>Title</th>
+          <th>Language</th>
+          <th>Created</th>
+          <th>Actions</th>
+          <!--td><button type="button" onclick="deleteAll()">Delete All</button-->
+          <!--tr>
+                <th></th>
+                <th><input type="text" id="newTitle"></th>
+                <th></th>
+                <td><button type="button" onclick="addSketch()">Add</button> </td>
+              </tr-->
+      </thead>
+      <tbody id="nodesList">
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="New Title" id="newTitle">
+        <span class="input-group-addon">
+          <input type="checkbox" aria-label="python" id="python">
+          Python
+        </span>
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" onclick="addSketch()">New</button>
+        </span>
+      </div>
+      <!-- /input-group -->
+    </div>
+    <!-- /.col-lg-6 -->
+  </div>
+</div>
+
+{% endblock %}

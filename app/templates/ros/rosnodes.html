@@ -1,0 +1,75 @@
+{% extends "user_layout.html" %}
+
+{% block styles %}  {{super()}}
+  <style>
+   #mainContent{
+      margin-left:25px;
+      margin-right:25px;
+      margin-top:10px;
+      padding:25px;
+      background:rgba(0,0,0,0.5);
+      border-radius: 5px;
+    }
+  </style>
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+<script type=text/javascript src=" {{url_for('static', filename='js/vendor/jquery-1.10.2.min.js') }}">
+</script>
+
+<script type=text/javascript src=" {{ url_for('static', filename='js/vendor/eventemitter2.min.js') }}">
+</script>
+
+<script type=text/javascript src=" {{ url_for('static', filename='js/vendor/roslib.min.js') }}">
+</script>
+
+<script type=text/javascript src=" {{url_for('static', filename='js/rosnode.js') }}">
+</script>
+{% endblock %}
+
+{% block content %}
+
+
+  <div class="container">
+    <div class="page-header">
+      <h1 style="color:white;">Running Nodes</h1>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="box" id="mainContent">
+          <div class="alert alert-warning" id="roscore-alert" style="display:none;">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <p><strong>roscore!</strong> is not running.</p>
+            <p>
+              <button type="button" class="btn btn-default" aria-label="Left Align">
+               Run <strong>roscore!</strong>
+              </button>
+
+            </p>
+
+          </div>
+
+
+          <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Node List</div>
+            <!-- Table -->
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="nodesList">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}

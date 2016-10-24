@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+
+<script type=text/javascript src=" {{url_for('static', filename='js/vendor/jquery-1.10.2.min.js') }}">
+</script>
+<script type=text/javascript src="{{url_for('static', filename='js/developer.js') }}">
+</script>
+<link rel="stylesheet" href="{{url_for('static', filename ='codemirror/theme/3024-night.css') }} ">
+
+
+
+<script type=text/javascript src="{{url_for('static', filename='codemirror/js/codemirror.js') }}">
+</script>
+
+<link rel="stylesheet" href="{{url_for('static', filename='codemirror/js/codemirror.css') }}">
+
+<script type=text/javascript src="{{url_for('static', filename='codemirror/mode/javascript/javascript.js') }}">
+</script>
+
+<script type=text/javascript src="{{url_for('static', filename='codemirror/mode/clike/clike.js') }}">
+</script>
+
+<style>
+  div.scroll {
+    height: auto;
+    overflow: scroll;
+  }
+  .CodeMirror {
+    height: inherit;
+  }
+</style>
+
+
+
+
+<div class="container" id="prog-tools">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <div class="panel-heading clearfix">
+        <h4 class="panel-title pull-left" style="padding-top: 7.5px;">{{ file.title }}</h4>
+        <div class="btn-group pull-right">
+          <div class="btn-toolbar" role="toolbar" aria-label="...">
+            <div class="btn-group" role="group" aria-label="...">
+              {% if file.language() == "cpp" %}
+              <button onclick="compile( {{ file.node_id }} );" class="btn btn-default">
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> Build
+              </button>
+              {% endif %}
+              <button id="run-btn" class="btn btn-default" onclick="run( {{ file.node_id }} );" class="btn btn-default navbar-btn">
+                <span class="glyphicon glyphicon-play" aria-hidden="true"></span> Run
+              </button>
+              <button onclick="save( {{ file.id }} )" class="btn btn-default">
+                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save
+              </button>
+              <button onclick="shell()" class="btn btn-default">
+                <span class="glyphicon glyphicon-sound-stereo" aria-hidden="true"></span> Shell
+              </button>
+              <a class="btn btn-default" href="/api/v1.0/filees/download/{{ file.id }}">
+                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-body" style="padding:0">
+        <textarea name='prog' id='code'>{{ file.code }}</textarea>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

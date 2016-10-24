@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block styles %} {{super()}}
+  <style>
+    .footer {
+        background-color: orange;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 100px;
+        width: 100%;
+        overflow:hidden;
+    }
+  </style>
+{% endblock %}
+
+
+
+{% block scripts %} {{ super() }}
+  <script type=text/javascript src="../static/plugins/toastr.min.js"></script>
+  <script type=text/javascript>
+      function execute_discovery(ip){
+        var my_address = ip;
+        var i=2; // skip 1 is the router
+        $("#discoveryList").append('<li class="divider"></li>');
+        while (i<256){
+          var target_address = "http://"+ my_address + "."+i + ":5000/discovery";
+          var x=0;
+          (function(target_address) {
+              $.getJSON(target_address, function( data ) {
+                add_client(target_address.split(':').slice(0,2).join(':')+'/');
+                console.log('== Tried '+target_address.split(':').slice(0,2).join(':')+'/, Success');
+              })
+              .fail(function() { 
+                console.log('-- Tried '+target_address.split(':').slice(0,2).join(':')+'/, Refused');  
+              });
+          })(target_address);
+          i++;
+        }
+      }
+
+      function add_client(address){
+        $("#discoveryList").append('<li><a href="">'+address+'</a></li>');
+      }
+
+      function start_discovery(){
+          window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;   //compatibility for firefox and chrome
+          var pc = new RTCPeerConnection({iceServers:[]}), noop = function(){};      
+          pc.createDataChannel("");    //create a bogus data channel
+          pc.createOffer(pc.setLocalDescription.bind(pc), noop);    // create offer and set local description
+          pc.onicecandidate = function(ice){  //listen for candidate events
+          if(!ice || !ice.candidate || !ice.candidate.candidate)  return;
+            var myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(ice.candidate.candidate)[1];
+            console.log('my IP: ', myIP);   
+            pc.onicecandidate = noop;
+            execute_discovery(myIP.split(".").slice(0, 3).join('.'));
+          };
+      }
+</script>
+
+{% endblock %}
+
+{% block navbar %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/main.css') }}">
+<div class="navbar navbar-inverse" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> 
+        <span class="sr-only">Toggle navigation</span> 
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span> 
+      </button>
+      <a class="navbar-brand" href="">
+        <img style="max-height:20px;" src="/static/img/logo/dotbot-full-50px-white.png">
+      </a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="{{ url_for('userViews.from_session') }}">User</a></li>
+        <li><a href="{{ url_for('rosViews.rosnodes') }}">Nodes</a></li>
+        <li><a href="{{ url_for('rosViews.rosconsole') }}">Console</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ROS <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/test">Test</a></li>
+            <li><a href="//wiki.ros.org">Ros Wiki</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Clients <span class="caret"></span></a>
+          <ul class="dropdown-menu" id="discoveryList">
+            <li><a onclick="start_discovery()">Search</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li> <a href="{{ url_for('mainViews.settings')}}"><span class="glyphicon glyphicon-cog"></span> </a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-off" style="color:red"></span>  <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="/api/v1.0/bin/poweroff">Power Off</a></li>
+            <li><a href="/api/v1.0/bin/reboot">Reboot</a></li>
+          </ul>
+        </li>
+        <li> <a href="{{ url_for('mainViews.logout') }}"><span class="glyphicon glyphicon-log-out"></span> </a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+  <div class="modal fade" id="shellModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="shellLabel"> Shell </h4>
+        </div>
+          <div class="modal-body" id="my_console" style="height:600px">
+          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block myContent %}
+
+{% endblock %}
+
+{% block footer %}
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6" style="padding:15px 0">
+          <p class="text-muted">Designed by Ludovico Russo.</p>
+        </div>
+        <div class="col-md-6" style="text-align:center">
+          <p class="text-muted">
+            <ul class="soc">
+              <li>
+                <a class="soc-twitter" href="#"></a>
+              </li>
+              <li>
+                <a class="soc-facebook" href="#"></a>
+              </li>
+              <li>
+                <a class="soc-instagram" href="#"></a>
+              </li>
+              <li>
+                <a class="soc-github soc-icon-last" href="//github.com/Robotoma/robotoma-web-server"></a>
+              </li>
+            </ul>
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+{% endblock %}
