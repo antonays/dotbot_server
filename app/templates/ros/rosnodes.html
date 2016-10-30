@@ -29,47 +29,61 @@
 </script>
 {% endblock %}
 
-{% block content %}
+{% block myContent %}
 
 
   <div class="container">
     <div class="page-header">
-      <h1 style="color:white;">Running Nodes</h1>
+      <h1 style="color:white;">Running ROS Nodes</h1>
     </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="box" id="mainContent">
-          <div class="alert alert-warning" id="roscore-alert" style="display:none;">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <p><strong>roscore!</strong> is not running.</p>
-            <p>
-              <button type="button" class="btn btn-default" aria-label="Left Align">
-               Run <strong>roscore!</strong>
-              </button>
+    <div class="box" id="mainContent">
+          {% if bot is not none %}
+            
+            <div class="panel panel-default" style="padding: 10px;">
+              <h4> Console for {{bot.data.ip}} </h4>
+            </div>
 
-            </p>
+            <div class="alert alert-warning" id="roscore-alert" style="display:none;">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              <p><strong>roscore!</strong> is not running.</p>
+              <p>
+                <button type="button" class="btn btn-default" aria-label="Left Align" onCLick="return run_roscore('{{bot.data.ip}}')">
+                 Run <strong>roscore!</strong>
+                </button>
 
-          </div>
+              </p>
+            </div>
 
+            <div class="panel panel-default">
+              <!-- Default panel contents -->
+              <div class="panel-heading">Node List</div>
+              <!-- Table -->
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="nodesList">
+                </tbody>
+              </table>
+            </div>
+        {% else %}
 
-          <div class="panel panel-default">
-            <!-- Default panel contents -->
-            <div class="panel-heading">Node List</div>
-            <!-- Table -->
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="nodesList">
-              </tbody>
-            </table>
-          </div>
-        </div>
+            <div class="panel panel-default" style="padding: 10px;"> Not Connected </div>
+            
+            <div class="panel panel-default" style="padding: 10px;"> 
+              <div class="panel-heading">Local search</div>
+              <div> Search for robots on the current LAN.</div>
+              <div style="padding:15px;">
+                <ul id="discoveryConsoleList" class="list-group" style="list-style-type: none;">
+                  <li><center><a onclick="return execute_discovery(this, 'discoveryConsoleList', consoleTarget[0], true);">Search</a></center></li>
+                </ul>
+              </div>
+            </div>
+            
+         {% endif %}
       </div>
-    </div>
-
-  </div>
+</div>
 {% endblock %}

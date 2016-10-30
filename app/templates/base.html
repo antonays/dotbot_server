@@ -33,14 +33,21 @@
 
   <body{% block body_attribs %}{% endblock body_attribs %}>
 
-    {% block body -%}
+{% block body -%}
+
     {% block navbar %}
     {%- endblock navbar %}
 
-    {% block content -%}
-    	<script type=text/javascript src="../static/js/jquery-2.2.1.min.js"></script>
+{% block content -%}
+    	
+			
+
+			{% block myContent %}
+
+			{% endblock %}
+			<script type=text/javascript src="../static/js/jquery-2.2.1.min.js"></script>
 			<script type=text/javascript src="../static/plugins/toastr.min.js"></script>
-			<div id="MyContent">
+			<div id="flash">
 			    {% with messages = get_flashed_messages() %}
 			       {% if messages %}
 			          <ul>
@@ -65,13 +72,12 @@
 
 			    
 			</div>
-			{% block myContent %}
-
-			{% endblock %}
+			
 
 {%- endblock content %}
 
 	    {% block scripts %}
+				
 		    <script type=text/javascript src="../static/js/jquery-2.2.1.min.js"></script>
 				<script type=text/javascript src="../static/bootstrap/js/bootstrap.min.js"></script>
 				<script type=text/javascript src="../static/plugins/jquery-ui.js"></script>
@@ -104,7 +110,7 @@
 				</script>
 	    {%- endblock scripts %}
 
-    {%- endblock body %}
+{%- endblock body %}
     <div class="container_main">
 		<div class="modal fade" id="shellModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 		  <div class="modal-dialog" role="document">

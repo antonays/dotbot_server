@@ -14,6 +14,8 @@ app = Flask(__name__)
 app.config.from_object("config")
 app.secret_key = 'dotbot_ludovico'
 
+connectedBot = None
+
 # italy_time = pytz.timezone("Europe/Rome")
 
 db = SQLAlchemy(app)

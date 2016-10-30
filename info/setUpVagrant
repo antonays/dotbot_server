@@ -1,0 +1,29 @@
+set up vagrant
+==============
+
+1) install vagrant for ubuntu
+
+2) install virtualbox
+
+3) create vagrant directory and run >> vagrant init debian/contrib-jessie
+
+4) change Vagrantfile in directory to Ludos file
+
+5) create src/ directory in vagrant directory
+
+6) run >> vagrant plugin install vagrant-vbguest
+
+7) >> vagrant up              should be set up correctly after some time
+
+8) vagrant ssh to enter the machine
+
+9) in machine: >> sudo apt-get install python-virtualenv python-pip git
+
+10) git clone
+
+11) >> virtualenv myEnv
+
+12) enter virtualenv: >> source myEnv/bin/activate
+
+13) >> pip install -r requirements.txt
+

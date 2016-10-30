@@ -14,83 +14,133 @@
 {% endblock %}
 
 
-{% block content %}
+{% block scripts %} {{ super() }}
+  <script type=text/javascript src=" {{url_for('static', filename='js/vendor/jquery-1.10.2.min.js') }}">
+  </script>
 
+  <script type=text/javascript src=" {{ url_for('static', filename='js/vendor/eventemitter2.min.js') }}">
+  </script>
+  <script type=text/javascript src=" {{ url_for('static', filename='js/vendor/roslib.min.js') }}">
+  </script>
+  <script type=text/javascript src=" {{url_for('static', filename='js/rostopic.js') }}">
+  </script>
+  <script type=text/javascript src=" {{url_for('static', filename='js/rosnode.js') }}">
+  </script>
+  <script type=text/javascript>
+      function run_roscore(address){
+        $.ajax({
+           url: '{{ url_for("rosViews.run_roscore") }}',
+           data: {'targetAdress':address},
+           error: function(error) {
+              console.log("roscore get failed " + error);
+           },
+           success: function(data) {
+              toastr["success"](data.response)  
+           },
+           type: 'GET'
+        });
+      }
+  </script>
+{% endblock %}
 
-<script type=text/javascript src=" {{url_for('static', filename='js/vendor/jquery-1.10.2.min.js') }}">
-</script>
-
-<script type=text/javascript src=" {{ url_for('static', filename='js/vendor/eventemitter2.min.js') }}">
-</script>
-<script type=text/javascript src=" {{ url_for('static', filename='js/vendor/roslib.min.js') }}">
-</script>
-<script type=text/javascript src=" {{url_for('static', filename='js/rostopic.js') }}">
-</script>
-<script type=text/javascript src=" {{url_for('static', filename='js/rosnode.js') }}">
-</script>
-
-
-
-
-
-<script type=text/javascript>
-
-</script>
+{% block myContent %}
   <div class="container">
     <div class="page-header">
-      <h1 style="color:white;">Ros Console</h1>
+      <h1 style="color:white;">ROS Console</h1>
     </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="box" id="mainContent">
-          <div class="alert alert-warning" id="roscore-alert" style="display:none;">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <p><strong>roscore!</strong> is not running.</p>
-            <p>
-              <button type="button" class="btn btn-default" aria-label="Left Align">
-               Run <strong>roscore!</strong>
-              </button>
+      <div class="box" id="mainContent">
+          {% if bot is not none %}
+            
+            <div class="panel panel-default" style="padding: 10px;">
+              <div class="row">
+                <div class="col-sm-6 col-md-6">
+                  <h4> Console for {{bot.data.ip}} </h4>
+                  <table class="table table-striped">
+                    <thead>
+                    </thead>
+                    <tbody id="robotProperties">
+                      <tr>
+                        <td><label>Name:</label></td>
+                        <td>{{bot.data.name}}</td>
+                      </tr>
+                      <tr>
+                        <td><label>Hardware:</label></td>
+                        <td>{{bot.data.hardware}}</td>
+                      </tr>
+                      <tr>
+                        <td><label>ROS Version:</label></td>
+                        <td>{{bot.data.ros}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                  <div class="form-group pull-right" style="float: right; vertical-align: bottom;">
+                    <form action="{{ url_for('rosViews.disc_rosconsole') }}" class="searchForm">
+                      <button type="submit" class="btn btn-danger" aria-label="Left Align">Disconnect</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            </p>
+            <div class="alert alert-warning" id="roscore-alert" style="display:none;">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              <p><strong>roscore!</strong> is not running.</p>
+              <p>
+                <button type="button" class="btn btn-default" aria-label="Left Align" onCLick="return run_roscore('{{bot.data.ip}}')">
+                 Run <strong>roscore!</strong>
+                </button>
 
-          </div>
-          <div class="panel panel-default">
-            <!-- Default panel contents -->
-            <div class="panel-heading">Nodes List</div>
-            <!-- Table -->
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="nodesList">
-              </tbody>
-            </table>
-          </div>
+              </p>
+            </div>
 
-          <div class="panel panel-default">
-            <!-- Default panel contents -->
-            <div class="panel-heading">Topics List</div>
-            <!-- Table -->
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="topics-list">
-              </tbody>
-            </table>
-          </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">Nodes List</div>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="nodesList">
+                </tbody>
+              </table>
+            </div>
 
-          <div class="row" id="rostopic-echo-div">
-          </div>
-        </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">Topics List</div>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="topics-list">
+                </tbody>
+              </table>
+            </div>
+
+            <div class="row" id="rostopic-echo-div">
+            </div>
+        {% else %}
+
+            <div class="panel panel-default" style="padding: 10px;"> Not Connected </div>
+            
+            <div class="panel panel-default" style="padding: 10px;"> 
+              <div class="panel-heading">Local search</div>
+              <div> Search for robots on the current LAN.</div>
+              <div style="padding:15px;">
+                <ul id="discoveryConsoleList" class="list-group" style="list-style-type: none;">
+                  <li><center><a onclick="return execute_discovery(this, 'discoveryConsoleList', consoleTarget[0], true);">Search</a></center></li>
+                </ul>
+              </div>
+            </div>
+            
+         {% endif %}
       </div>
-
   </div>
 {% endblock %}

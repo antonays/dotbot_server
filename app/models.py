@@ -184,3 +184,9 @@ class Language(db.Model):
 	language_id = db.Column(db.Integer, primary_key=True)
 	language_name = db.Column(db.String(255))
 	isDeleted = db.Column(db.Boolean, default=False)
+
+class Bot():
+
+	def __init__(self, n, d):
+		self.name = n
+		self.data = d

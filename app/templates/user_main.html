@@ -1,92 +1,16 @@
 {% extends "user_layout.html" %}
-
-
-
 {% block styles %} {{super()}}
 	<link rel="stylesheet" href="{{url_for('static', filename='plugins/codemirror/js/codemirror.css') }}">
 	<link rel="stylesheet" href="{{url_for('static', filename ='plugins/codemirror/theme/3024-night.css') }} ">
-  <style>
-    #mainContent{
-    	margin-left:25px;
-    	margin-right:25px;
-    	margin-top:10px;
-    	padding:25px;
-    	background:rgba(0,0,0,0.5);
-    	border-radius: 5px;
-    }
-    
- 	#tabs-left { 
-	    position: relative; 
-	    padding-left: 12.5em; 
-	} 
-	#tabs-left .ui-tabs-nav { 
-	    position: absolute; 
-	    left: 0.25em; 
-	    top: 0.25em; 
-	    bottom: 0.25em; 
-	    width: 12em; 
-	    padding: 0.7em 0 0.7em 0.5em; 
-	} 
-	#tabs-left .ui-tabs-nav li { 
-	    right: 1px; 
-	    width: 100%;
-	    height: 70px;
-	    border-right: none; 
-	    border-bottom-width: 1px !important; 
-	    -moz-border-radius: 4px 0px 0px 4px; 
-	    -webkit-border-radius: 4px 0px 0px 4px; 
-	    border-radius: 4px 0px 0px 4px; 
-	    overflow-x: auto; 
-	    top:40px;
-	} 
-	#tabs-left .ui-tabs-nav li.ui-tabs-selected, 
-	#tabs-left .ui-tabs-nav li.ui-state-active { 
-	    border-right: 1px solid transparent; 
-	} 
-	#tabs-left .ui-tabs-nav li a { 
-	    float: right; 
-	    width: 100%; 
-	    text-align: right; 
-	    font-size:20px;
-	    font-weight: bold;
-	} 
-	#tabs-header{
-		font-size: 22px;
-		font-weight: bold;
-		text-align: center;
-		padding-top:15px;
-	}
-	#user_form, #user_del_form, #user_psw_form{
-		margin-top:25px;
-	}
-	.localButtonStyle{
-		margin: 0 auto; 
-		display:block;
-		padding:10px !important;
-		font-weight: bold;
-		margin-left: 5px;
-		margin-right: 5px;
-	}
-
-	.form-group{
-		width:70%;
-		margin:20px!important;
-	}
-
-	.hid{
-	  display:none;
-	}
-  </style>
-  
+	<link rel="stylesheet" href="{{url_for('static', filename ='css/user_main.css') }} ">  
 {% endblock %}
 
 {% block scripts %} {{ super() }}
-	<!-- <script type=text/javascript src=" {{ url_for('static', filename='plugins/jquery-ui.js') }}"></script> -->
 	<script type="text/javascript">
+  	var editTargets = ['{{ url_for("programViews.getProgramDetails") }}','{{ url_for("fileViews.getFileDetails") }}' ];
 		$(document).ready(function() {
 		  	$( "#tabs-left" ).tabs();
 		});
-
 
 		$(document).on('click', '#newProg', function () {
     	setSelectedIndex(document.getElementById("select_prog"), 0);
@@ -101,7 +25,7 @@
     $(document).on('change', '#select_prog', function () {
         var selectedValue = $(this).val();
         $.ajax({
-          url: "{{ url_for('programViews.getProgramDetails') }}",
+          url: editTargets[0],
           type: 'GET',               
           data: {programid: selectedValue},
           success: function(response){
@@ -147,7 +71,7 @@
     	idField = $(this).attr('id');
     	id = idField.split('[')[1].split(']')[0];
     	$.ajax({
-          url: "{{ url_for('fileViews.getFileDetails') }}",
+          url: editTargets[1],
           type: 'GET',               
           data: {fileid: id},
           success: function(response){
@@ -193,203 +117,198 @@
 
 {% block myContent %}
 <section class="content">
-  	<div class="row">
-    	<div class="col-xs-12" id="wrapper">
-      	<div class="box" id="mainContent">
-					<div id="tabs-left">
+	<div class="box" id="mainContent">
+		<div id="tabs-left">
+			<ul>
+				<div><img src="../static/img/logo/dotbot-500px.png" width="20%" height="20%" style="margin: 0 auto; display:block;"></div>
+				<p id="tabs-header">User Interface</p>
+			  	<li><a href="#tabDetails">Dati utente</a></li>
+			  	<li><a href="#tabPrograms">Programmi</a></li>
+			</ul>
 
-						<ul>
-							<div><img src="../static/img/logo/dotbot-500px.png" width="20%" height="20%" style="margin: 0 auto; display:block;"></div>
-							<p id="tabs-header">User Interface</p>
-						  	<li><a href="#tabDetails">Dati utente</a></li>
-						  	<li><a href="#tabPrograms">Programmi</a></li>
-						</ul>
-
-						<div id="tabDetails">
-					    <div class="row">
-				      	<div class="col-xs-12">
-				      		<form action="{{ url_for('userViews.update') }}" method="post" id="user_form">
-				      			<div class="form-group"> <h3> Modifica Dati utente </h3> </div>
-				      			<input type="hidden" value="{{ connected_user.id }}" name="user_id">
-				      			<div class="form-group">
-					      			<label for="usr_name">Nome utente:</label>
-                      <input class="form-control input-lg" id="usr_name" name="username" type="text" value="{{ connected_user.user_name }}">
-                    </div>
-                    <div class="form-group">
-                      <label for="usr_email">E-Mail:</label>
-                      <input class="form-control input-lg" id="usr_email" name="useremail" type="email" value="{{ connected_user.user_email }}">
-                    </div>
-                  	<div class="form-group">
-                      <label for="usr_membership">Membro da:</label>
-                      <input class="form-control input-lg" id="usr_membership" disabled type="text" value="{{ connected_user.member_since }}">
-                      <p class="help-block">In UTC time</p>
-                    </div>
-                    <div class="form-group">
-                      <label for="usr_lastseen">Ultimo accesso:</label>
-                      <input class="form-control input-lg" id="usr_lastseen" disabled type="text" value="{{ connected_user.last_seen }}">
-                      <p class="help-block">In UTC time</p>
-                  	</div>
-                    <div class="form-group">
-                    	<button type="submit" class="localButtonStyle btn btn-success pull-right">Salva</button>
-                    </div>
-				      		</form>
-				      	</div>
-						  </div>
-					    <div class="row">
-				      	<div class="col-xs-12">
-				      		<form action="{{ url_for('userViews.delete') }}" method="post" id="user_del_form" onsubmit="confirm('Are you sure you want to delete?')">
-				      			<div class="form-group"> <h3> Cancellare Utente </h3>
-				      				<p class="help-block">This will delete the current user from the system, along with all its programs and files. Please be certain that you would like to continue before proceeding.</p>
-				      				<input type="hidden" value="{{ connected_user.id }}" name="user_id">
-				      				<button type="submit" class="localButtonStyle btn btn-danger pull-right">Cancella</button>
-				      			 </div>
-				      		</form>
-				      	</div>
-					    </div>
-					    <div class="row">
-				      	<div class="col-xs-12">
-				      		<form action="{{ url_for('userViews.p_update') }}" method="post" id="user_psw_form">
-				      			<div class="form-group"> <h3> Cambia Password </h3> </div>
-				      			<input type="hidden" value="{{ connected_user.id }}" name="user_id">
-				      			<div class="form-group"> 
-				      				<label for="oldpass">Password Attuale</label>
-				      				<input id="oldpass" type="password" name="oldpass" class="form-control input-lg">
-				      				<p class="help-block">Digitare la vecchia password</p>
-				      			</div>
-				      			<div class="form-group"> 
-				      				<label for="newpass1">Nuovo password</label>
-				      				<input id="newpass1" type="password" name="newpass1" class="form-control input-lg">
-				      				<p class="help-block">Digitare la nuova password</p>
-				      			</div>
-				      			<div class="form-group"> 
-				      				<label for="newpass2">Ripeti password</label>
-				      				<input id="newpass2" type="password" name="newpass2" class="form-control input-lg">
-				      				<p class="help-block">Ripeti password nuovo per motivi di sicurezza</p>
-				      			</div>
-				      			<div class="form-group">
-				      				<button type="submit" class="localButtonStyle btn btn-success pull-right">Salva</button>
-				      			</div>
-				      			
-				      		</form>
-				      	</div>
-					    </div>
-						</div> <!-- end details tab -->
+			<div id="tabDetails">
+		    <div class="row">
+	      	<div class="col-xs-12">
+	      		<form action="{{ url_for('userViews.update') }}" method="post" id="user_form">
+	      			<div class="form-group"> <h3> Modifica Dati utente </h3> </div>
+	      			<input type="hidden" value="{{ connected_user.id }}" name="user_id">
+	      			<div class="form-group">
+		      			<label for="usr_name">Nome utente:</label>
+                <input class="form-control input-lg" id="usr_name" name="username" type="text" value="{{ connected_user.user_name }}">
+              </div>
+              <div class="form-group">
+                <label for="usr_email">E-Mail:</label>
+                <input class="form-control input-lg" id="usr_email" name="useremail" type="email" value="{{ connected_user.user_email }}">
+              </div>
+            	<div class="form-group">
+                <label for="usr_membership">Membro da:</label>
+                <input class="form-control input-lg" id="usr_membership" disabled type="text" value="{{ connected_user.member_since }}">
+                <p class="help-block">In UTC time</p>
+              </div>
+              <div class="form-group">
+                <label for="usr_lastseen">Ultimo accesso:</label>
+                <input class="form-control input-lg" id="usr_lastseen" disabled type="text" value="{{ connected_user.last_seen }}">
+                <p class="help-block">In UTC time</p>
+            	</div>
+              <div class="form-group">
+              	<button type="submit" class="localButtonStyle btn btn-success pull-right">Salva</button>
+              </div>
+	      		</form>
+	      	</div>
+			  </div>
+		    <div class="row">
+	      	<div class="col-xs-12">
+	      		<form action="{{ url_for('userViews.delete') }}" method="post" id="user_del_form" onsubmit="confirm('Are you sure you want to delete?')">
+	      			<div class="form-group"> <h3> Cancellare Utente </h3>
+	      				<p class="help-block">This will delete the current user from the system, along with all its programs and files. Please be certain that you would like to continue before proceeding.</p>
+	      				<input type="hidden" value="{{ connected_user.id }}" name="user_id">
+	      				<button type="submit" class="localButtonStyle btn btn-danger pull-right">Cancella</button>
+	      			 </div>
+	      		</form>
+	      	</div>
+		    </div>
+		    <div class="row">
+	      	<div class="col-xs-12">
+	      		<form action="{{ url_for('userViews.p_update') }}" method="post" id="user_psw_form">
+	      			<div class="form-group"> <h3> Cambia Password </h3> </div>
+	      			<input type="hidden" value="{{ connected_user.id }}" name="user_id">
+	      			<div class="form-group"> 
+	      				<label for="oldpass">Password Attuale</label>
+	      				<input id="oldpass" type="password" name="oldpass" class="form-control input-lg">
+	      				<p class="help-block">Digitare la vecchia password</p>
+	      			</div>
+	      			<div class="form-group"> 
+	      				<label for="newpass1">Nuovo password</label>
+	      				<input id="newpass1" type="password" name="newpass1" class="form-control input-lg">
+	      				<p class="help-block">Digitare la nuova password</p>
+	      			</div>
+	      			<div class="form-group"> 
+	      				<label for="newpass2">Ripeti password</label>
+	      				<input id="newpass2" type="password" name="newpass2" class="form-control input-lg">
+	      				<p class="help-block">Ripeti password nuovo per motivi di sicurezza</p>
+	      			</div>
+	      			<div class="form-group">
+	      				<button type="submit" class="localButtonStyle btn btn-success pull-right">Salva</button>
+	      			</div>
+	      			
+	      		</form>
+	      	</div>
+		    </div>
+			</div> <!-- end details tab -->
 
 
-						<div class="row" style="min-height: 500px;">
-				      <div class="col-xs-12">
-						    <div id="tabPrograms">
-						    	<div id="programsWrapper">
-						      	<div class="form-group">
-							      	 	<label for="newProg">Crea nuovo programma</label>
-							      		<button type="button" id="newProg" class="localButtonStyle btn btn-info pull-right">Nuovo</button>
-							      </div>
-							      <div class="form-group">
-							      	<label>O</label>
-							      </div>
-							      <div class="form-group">
-				      				<label for="select_prog">Seleziona un programma esistente</label>
-				      				<select name="program" id="select_prog" class="form-control">
-			                  <option selected disabled>Seleziona Programma</option>
-			                  {% for program in user_programs %}
-			                    <option value="{{program[0].program_id}}">{{program[0].program_name}}</option>
-			                  {% endfor %}
-			                </select>
-			              </div>
-			              <div id="detailsWrapper">
-			                <div id="program_details" class="hid">
-				                <form class="form-horizontal" action="{{ url_for('programViews.update') }}" method="post" id="program_form">
-				                	<input type="hidden" id="program_id_update" name="program_id">
-												  <div class="form-group">
-												    <label for="program_name">Nome del programma:</label>
-												    <input type="text" class="form-control" id="program_name" name="prog_name">
-												  </div>
-												  <div class="form-group">
-													  <label for="select_lang">Lingua del programma:</label>
-													  <select name="lang" id="select_lang" class="form-control">
-						                  <option selected disabled>Seleziona Lingua</option>
-						                  {% for language in languages %}
-						                    <option value="{{language.language_id}}">{{language.language_name}}</option>
-						                  {% endfor %}
-						                </select>
-												  </div>
-												  <div class="form-group">
-												    <label for="program_init_date">Inizializzato su:</label>
-												    <input type="text" class="form-control" id="program_init_date" readonly>
-												  </div>
-												  <div class="form-group">
-												    <label for="program_is_init">Catkin Inizializzato:</label>
-												    <input type="text" class="form-control" id="program_is_init" readonly>
-												  </div>
-												  <div class="form-group">
-												  	<button type="submit" class="localButtonStyle btn btn-success pull-right">Salva</button>
-												</form>
-												<form action="{{ url_for('programViews.delete') }}" method="post">
-														<input type="hidden" id="program_id_delete" name="program_id">
-														<button type="submit" class="localButtonStyle btn btn-danger pull-right">Cancella</button>
-												</form>
-														
+				<div class="row" style="min-height: 500px;">
+		      <div class="col-xs-12">
+				    <div id="tabPrograms">
+				    	<div id="programsWrapper">
+				      	<div class="form-group">
+					      	 	<label for="newProg">Crea nuovo programma</label>
+					      		<button type="button" id="newProg" class="localButtonStyle btn btn-info pull-right">Nuovo</button>
+					      </div>
+					      <div class="form-group">
+					      	<label>O</label>
+					      </div>
+					      <div class="form-group">
+		      				<label for="select_prog">Seleziona un programma esistente</label>
+		      				<select name="program" id="select_prog" class="form-control">
+	                  <option selected disabled>Seleziona Programma</option>
+	                  {% for program in user_programs %}
+	                    <option value="{{program[0].program_id}}">{{program[0].program_name}}</option>
+	                  {% endfor %}
+	                </select>
+	              </div>
+	              <div id="detailsWrapper">
+	                <div id="program_details" class="hid">
+		                <form class="form-horizontal" action="{{ url_for('programViews.update') }}" method="post" id="program_form">
+		                	<input type="hidden" id="program_id_update" name="program_id">
+										  <div class="form-group">
+										    <label for="program_name">Nome del programma:</label>
+										    <input type="text" class="form-control" id="program_name" name="prog_name">
+										  </div>
+										  <div class="form-group">
+											  <label for="select_lang">Lingua del programma:</label>
+											  <select name="lang" id="select_lang" class="form-control">
+				                  <option selected disabled>Seleziona Lingua</option>
+				                  {% for language in languages %}
+				                    <option value="{{language.language_id}}">{{language.language_name}}</option>
+				                  {% endfor %}
+				                </select>
+										  </div>
+										  <div class="form-group">
+										    <label for="program_init_date">Inizializzato su:</label>
+										    <input type="text" class="form-control" id="program_init_date" readonly>
+										  </div>
+										  <div class="form-group">
+										    <label for="program_is_init">Catkin Inizializzato:</label>
+										    <input type="text" class="form-control" id="program_is_init" readonly>
+										  </div>
+										  <div class="form-group">
+										  	<button type="submit" class="localButtonStyle btn btn-success pull-right">Salva</button>
+										</form>
+										<form action="{{ url_for('programViews.delete') }}" method="post">
+												<input type="hidden" id="program_id_delete" name="program_id">
+												<button type="submit" class="localButtonStyle btn btn-danger pull-right">Cancella</button>
+										</form>
+												
 
-											</div>
-										</div>
-						      	<div class="form-group">
-							      	<div id="editor" class=hid>
-							      		<h3>File</h3>
-										  	<div class="panel panel-default">
-												  <div class="panel-heading">Elenco dei file per questo programma</div>
-												  <div class="panel-body">
-												  	<ul class="list-group" id="panel_list">
-
-												  	</ul>
-												  	<p class="help-block"> clic su un file per visualizzarne il contenuto</p>
-												  </div>
-												</div>
-											  <div class="panel panel-default">
-											    <div class="panel-heading">
-											      <div class="panel-heading clearfix row">
-											      	<div class="col-xs-3">
-											        	<h4 class="panel-title" id="fileHeader" style="padding-top: 2.5px;">File editor</h4>
-											        </div>
-											        <div class="col-xs-9" style="margin-right: auto;">
-												        <div class="btn-group">
-												          <div class="btn-toolbar" role="toolbar" aria-label="...">
-												            <div class="btn-group" role="group" aria-label="...">
-												              <div class="hid" id="cpp_container">
-													              <button class="btn btn-default" id="btnCompile">
-													                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> Build
-													              </button>
-													            </div>
-												              <button id="run-btn" class="btn btn-default" class="btn btn-default navbar-btn">
-												                <span class="glyphicon glyphicon-play" aria-hidden="true"></span> Run
-												              </button>
-												              <button class="btn btn-default" id="btnSave">
-												                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save
-												              </button>
-												              <button  class="btn btn-default" id="btnShell">
-												                <span class="glyphicon glyphicon-sound-stereo" aria-hidden="true"></span> Shell
-												              </button>
-												              <a class="btn btn-default" id="btnDownload">
-												                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download
-												              </a>
-												            </div>
-												          </div>
-												        </div>
-												      </div>
-											      </div>
-											    </div>
-											    <div class="panel-body" style="padding:0;">
-											        <textarea name='prog' id='code'></textarea>
-											    </div>
-										  	</div>
-											</div>
-										</div>
 									</div>
-						    </div>
-						  </div>
-						</div> <!-- end programs tab -->
-					</div> <!-- end tabs -->
-				</div>
-			</div>
-		</div>
+								</div>
+				      	<div class="form-group">
+					      	<div id="editor" class=hid>
+					      		<h3>File</h3>
+								  	<div class="panel panel-default">
+										  <div class="panel-heading">Elenco dei file per questo programma</div>
+										  <div class="panel-body">
+										  	<ul class="list-group" id="panel_list">
+
+										  	</ul>
+										  	<p class="help-block"> clic su un file per visualizzarne il contenuto</p>
+										  </div>
+										</div>
+									  <div class="panel panel-default">
+									    <div class="panel-heading">
+									      <div class="panel-heading clearfix row">
+									      	<div class="col-xs-3">
+									        	<h4 class="panel-title" id="fileHeader" style="padding-top: 2.5px;">File editor</h4>
+									        </div>
+									        <div class="col-xs-9" style="margin-right: auto;">
+										        <div class="btn-group">
+										          <div class="btn-toolbar" role="toolbar" aria-label="...">
+										            <div class="btn-group" role="group" aria-label="...">
+										              <div class="hid" id="cpp_container">
+											              <button class="btn btn-default" id="btnCompile">
+											                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> Build
+											              </button>
+											            </div>
+										              <button id="run-btn" class="btn btn-default" class="btn btn-default navbar-btn">
+										                <span class="glyphicon glyphicon-play" aria-hidden="true"></span> Run
+										              </button>
+										              <button class="btn btn-default" id="btnSave">
+										                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save
+										              </button>
+										              <button  class="btn btn-default" id="btnShell">
+										                <span class="glyphicon glyphicon-sound-stereo" aria-hidden="true"></span> Shell
+										              </button>
+										              <a class="btn btn-default" id="btnDownload">
+										                <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download
+										              </a>
+										            </div>
+										          </div>
+										        </div>
+										      </div>
+									      </div>
+									    </div>
+									    <div class="panel-body" style="padding:0;">
+									        <textarea name='prog' id='code'></textarea>
+									    </div>
+								  	</div>
+									</div>
+								</div>
+							</div>
+				    </div>
+				  </div>
+				</div> <!-- end programs tab -->
+		</div> <!-- end tabs -->
+	</div>
 </section>
 {% endblock %}
